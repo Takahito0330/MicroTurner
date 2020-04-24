@@ -3,9 +3,9 @@ This is a program for a page-turning foot-switch.
 
 A page-turning signal will be sent to a device (e.g. iPad) by Bluetooth when a button connected to a micro:bit pushed.
 
-## Compiling setup
+## Compiling environment
 Arduino IDE was used for compiling. 
-Change its setting before compiling.
+Change its setting.
 
 0. Connect a micro:bit to your PC.
 1. Open *File->Preferences*, and add the following URL to the field of "additional board manager URL".
@@ -14,8 +14,7 @@ Change its setting before compiling.
     and install **Nordic Semiconductor nRF5 based boards**.
 3. Select **BBC micro:bit** on *Tools->Board:*.
 4. Select **COMxx (BBC micro:bit)** on *Tools->Serial Port*.
-5. Select **S110** on *Tools->Softdevice*.
+5. Select **S130** on *Tools->Softdevice*.
 
 ## Dependencies
-- Adafruit_Microbit [https://github.com/adafruit/Adafruit_Microbit]
 - BLEPeripheral [https://github.com/sandeepmistry/arduino-BLEPeripheral]

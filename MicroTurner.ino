@@ -1,45 +1,50 @@
+/**
+   @file MicroTurner.ino
+   @brief BLuetooth譜めくりフットペダルのmicro:bit用プログラム
+   @author Takahito Suzuki
+   @date 2020.4.19
+*/
+
 #include <SPI.h>
 #include <BLEHIDPeripheral.h>
 #include <BLEKeyboard.h>
+#include "MicrobitLED.h"
 
 //#define ANDROID_CENTRAL
 
-BLEHIDPeripheral bleHIDPeripheral = BLEHIDPeripheral();
-BLEKeyboard bleKeyboard;
-
-// 送出先デバイスのOS定義
+//! 送出先デバイスのOS定義
 enum TARGET_TYPE
 {
   WINDOWS,
   MAC
 };
-
-// 初期はMac
 enum TARGET_TYPE target = MAC;
-
 // ページアップとページダウン信号
 uint8_t signal_up, signal_down;
+
+BLEHIDPeripheral bleHIDPeripheral = BLEHIDPeripheral();
+BLEKeyboard bleKeyboard;
 
 void signal_config()
 {
   // OSによって送出信号を切り替え
   switch (target)
   {
-  case WINDOWS:
-    Serial.println("Windows Mode");
-    signal_up = 75;
-    signal_down = 78;
-    break;
-  case MAC:
-    Serial.println("Mac Mode");
-    signal_up = 82;
-    signal_down = 81;
-    break;
-  default:
-    Serial.println("UNKNOWN Mode");
-    signal_up = 0;
-    signal_down = 0;
-    break;
+    case WINDOWS:
+      Serial.println("Windows Mode");
+      signal_up = 75;
+      signal_down = 78;
+      break;
+    case MAC:
+      Serial.println("Mac Mode");
+      signal_up = 82;
+      signal_down = 81;
+      break;
+    default:
+      Serial.println("UNKNOWN Mode");
+      signal_up = 0;
+      signal_down = 0;
+      break;
   }
 }
 
@@ -58,7 +63,15 @@ void setup()
   bleHIDPeripheral.addHID(bleKeyboard);
   bleHIDPeripheral.begin();
 
+  led_init();
   signal_config();
+
+  pinMode(PIN_BUTTON_A, INPUT);
+  pinMode(PIN_BUTTON_B, INPUT);
+
+  pinMode(PIN_A0, INPUT);
+  pinMode(PIN_A1, INPUT);
+
   Serial.println(F("BLE HID Keyboard"));
 }
 
@@ -66,11 +79,8 @@ void loop()
 {
   BLECentral central = bleHIDPeripheral.central();
   int _code = -1;
-  pinMode(PIN_BUTTON_A, INPUT);
-  pinMode(PIN_BUTTON_B, INPUT);
 
-  pinMode(PIN_A0, INPUT);
-  pinMode(PIN_A1, INPUT);
+  show_icon(DISCONNECT);
 
   if (central)
   {
@@ -80,6 +90,8 @@ void loop()
 
     while (central.connected())
     {
+      show_icon(CONNECT);
+
       if (!digitalRead(PIN_BUTTON_A))
       {
         Serial.println("PUSH A");
